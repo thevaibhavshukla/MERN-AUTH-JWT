@@ -43,7 +43,7 @@ router.post("/register", async (req, res) => {
           user.password
         );
         if (passwordsMached) {
-          if (user.isVerifed) {
+          if (user.isVerified) {
             const dataToBeSentToFrontend = {
               _id: user._id,
               email: user.email,
@@ -112,13 +112,19 @@ router.post("/verifyemail", async (req, res) => {
 
         const tokenData = await Token.findOne({ token: req.body.token });
         if (tokenData) {
-            await User.findOneAndUpdate({ _id: tokenData.userid, isVerifed: true });
+          ////////////////////////////////////////////////////////////////
+          // userdata = await User.findById({ _id: tokenData.userid});
+          // console.log(userdata)
+          ///////////////////////////////////////////////////////////////////
+             await User.findByIdAndUpdate(tokenData.userid, {isVerified : true});
+             
             await Token.findOneAndDelete({ token: req.body.token });
             res.send({ success: true, message: "Email Verified Successlly" });
         } else {
             res.send({ success: false, message: "Invalid token" });
         }
     } catch (error) {
+      console.log(error)
         res.status(500).send(error);
     }
 });
